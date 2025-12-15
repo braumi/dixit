@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "../../lib/supabaseClient";
 
+// Prevent static prerender issues with client-only hooks
+export const dynamic = "force-dynamic";
+
 const MAX_PLAYERS = 8;
 
 export default function RoomPage({ params }) {
