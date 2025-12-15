@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dixit | Play with Friends</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="brand">
+        <div class="logo">D</div>
+        <div class="name">Dixit</div>
+      </div>
+      <div class="hero-copy">
+        <p class="tagline">Tell stories. Guess creatively. Play together.</p>
+        <p class="sub">Create a private room or jump into a friend's game in seconds.</p>
+      </div>
+    </header>
+
+    <main class="card">
+      <section class="user-block">
+        <label for="username" class="label">Choose a username</label>
+        <div class="input-row">
+          <input id="username" name="username" type="text" placeholder="Storyteller123" maxlength="20" autocomplete="off">
+          <button id="remember" type="button" class="ghost-btn" title="Save name on this device">Save</button>
+        </div>
+        <p class="hint">We'll use this name inside your lobby.</p>
+      </section>
+
+      <section class="actions">
+        <div class="action-card">
+          <div>
+            <h2>Create a private game</h2>
+            <p>Spin up a room and share the code or link with friends.</p>
+          </div>
+          <button id="create-btn" class="primary-btn">Create Game</button>
+        </div>
+
+        <div class="divider">
+          <span>or</span>
+        </div>
+
+        <form id="join-form" class="action-card">
+          <div class="join-fields">
+            <div class="field">
+              <label for="join-code" class="label">Game code</label>
+              <input id="join-code" name="join-code" type="text" placeholder="ABCD" maxlength="8" autocomplete="off">
+            </div>
+          </div>
+          <button type="submit" class="secondary-btn">Join Game</button>
+        </form>
+      </section>
+
+      <section id="status" class="status" role="status" aria-live="polite"></section>
+    </main>
+
+    <footer class="footer">
+      <p>Inspired by the playful spirit of Dixit. This is a fan-made demo.</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
