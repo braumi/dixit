@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 // Prevent static prerender issues with client-only hooks
 export const dynamic = "force-dynamic";
@@ -18,7 +18,6 @@ const createFallbackCode = () => {
 
 export default function HomePage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [username, setUsername] = useState("");
   const [joinCode, setJoinCode] = useState("");
   const [status, setStatus] = useState({ message: "", type: "" });
@@ -26,14 +25,15 @@ export default function HomePage() {
   useEffect(() => {
     const stored = window.localStorage.getItem("dixit:name");
     if (stored) setUsername(stored);
-    
+
     // Pre-fill join code if coming from a room link
-    const codeParam = searchParams.get("join");
+    const search = new URLSearchParams(window.location.search);
+    const codeParam = search.get("join");
     if (codeParam) {
       setJoinCode(codeParam.toUpperCase());
       setStatus({ message: "Enter your name to join this room", type: "ok" });
     }
-  }, [searchParams]);
+  }, []);
 
   const updateStatus = (message, type = "") => setStatus({ message, type });
 
@@ -79,89 +79,91 @@ export default function HomePage() {
   };
 
   return (
-    <div className="page">
-      <header className="hero">
-        <div className="brand">
-          <div className="logo">D</div>
-          <div className="name">Dixit</div>
-        </div>
-        <div className="hero-copy">
-          <p className="tagline">Tell stories. Guess creatively. Play together.</p>
-          <p className="sub">Create a private room or jump into a friend's game in seconds.</p>
-        </div>
-      </header>
-
-      <main className="card">
-        <section className="user-block">
-          <label htmlFor="username" className="label">
-            Choose a username
-          </label>
-          <div className="input-row">
-            <input
-              id="username"
-              name="username"
-              type="text"
-              placeholder="Storyteller123"
-              maxLength={20}
-              autoComplete="off"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <button type="button" className="ghost-btn" onClick={persistName} title="Save name on this device">
-              Save
-            </button>
+    <Suspense fallback={null}>
+      <div className="page">
+        <header className="hero">
+          <div className="brand">
+            <div className="logo">D</div>
+            <div className="name">Dixit</div>
           </div>
-          <p className="hint">We'll use this name inside your lobby.</p>
-        </section>
+          <div className="hero-copy">
+            <p className="tagline">Tell stories. Guess creatively. Play together.</p>
+            <p className="sub">Create a private room or jump into a friend's game in seconds.</p>
+          </div>
+        </header>
 
-        <section className="actions">
-          <div className="action-card">
-            <div>
-              <h2>Create a private game</h2>
-              <p>Spin up a room and share the code or link with friends.</p>
+        <main className="card">
+          <section className="user-block">
+            <label htmlFor="username" className="label">
+              Choose a username
+            </label>
+            <div className="input-row">
+              <input
+                id="username"
+                name="username"
+                type="text"
+                placeholder="Storyteller123"
+                maxLength={20}
+                autoComplete="off"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <button type="button" className="ghost-btn" onClick={persistName} title="Save name on this device">
+                Save
+              </button>
             </div>
-            <button type="button" className="primary-btn" onClick={handleCreate}>
-              Create Game
-            </button>
-          </div>
+            <p className="hint">We'll use this name inside your lobby.</p>
+          </section>
 
-          <div className="divider">
-            <span>or</span>
-          </div>
-
-          <form className="action-card" onSubmit={handleJoin}>
-            <div className="join-fields">
-              <div className="field">
-                <label htmlFor="join-code" className="label">
-                  Game code
-                </label>
-                <input
-                  id="join-code"
-                  name="join-code"
-                  type="text"
-                  placeholder="ABCD"
-                  maxLength={8}
-                  autoComplete="off"
-                  value={joinCode}
-                  onChange={(e) => setJoinCode(e.target.value)}
-                />
+          <section className="actions">
+            <div className="action-card">
+              <div>
+                <h2>Create a private game</h2>
+                <p>Spin up a room and share the code or link with friends.</p>
               </div>
+              <button type="button" className="primary-btn" onClick={handleCreate}>
+                Create Game
+              </button>
             </div>
-            <button type="submit" className="secondary-btn">
-              Join Game
-            </button>
-          </form>
-        </section>
 
-        <section className={`status ${status.type}`} role="status" aria-live="polite">
-          {status.message}
-        </section>
-      </main>
+            <div className="divider">
+              <span>or</span>
+            </div>
 
-      <footer className="footer">
-        <p>Inspired by the playful spirit of Dixit. This is a fan-made demo.</p>
-      </footer>
-    </div>
+            <form className="action-card" onSubmit={handleJoin}>
+              <div className="join-fields">
+                <div className="field">
+                  <label htmlFor="join-code" className="label">
+                    Game code
+                  </label>
+                  <input
+                    id="join-code"
+                    name="join-code"
+                    type="text"
+                    placeholder="ABCD"
+                    maxLength={8}
+                    autoComplete="off"
+                    value={joinCode}
+                    onChange={(e) => setJoinCode(e.target.value)}
+                  />
+                </div>
+              </div>
+              <button type="submit" className="secondary-btn">
+                Join Game
+              </button>
+            </form>
+          </section>
+
+          <section className={`status ${status.type}`} role="status" aria-live="polite">
+            {status.message}
+          </section>
+        </main>
+
+        <footer className="footer">
+          <p>Inspired by the playful spirit of Dixit. This is a fan-made demo.</p>
+        </footer>
+      </div>
+    </Suspense>
   );
 }
 
