@@ -38,45 +38,42 @@ body {
 .hero {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 16px;
+  justify-content: center;
+  margin-bottom: 24px;
 }
 
-.brand {
-  display: inline-flex;
+.hero-logo {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
+  text-align: center;
 }
 
-.logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  display: grid;
-  place-items: center;
-  font-weight: 800;
-  font-size: 22px;
-  color: #0c0c0c;
-  box-shadow: var(--shadow);
+.logo-img {
+  height: auto !important;
+  width: auto !important;
+  max-height: 300px !important;
+  max-width: 100% !important;
+  object-fit: contain;
+  display: block !important;
 }
 
-.name {
-  font-size: 22px;
-  font-weight: 700;
-}
-
-.hero-copy .tagline {
+.hero-quote {
   margin: 0;
-  font-size: 20px;
-  font-weight: 700;
+  padding: 0;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--muted);
+  max-width: 600px;
+  line-height: 1.6;
+  border: none;
+  quotes: none;
 }
 
-.hero-copy .sub {
-  margin: 4px 0 0;
-  color: var(--muted);
-  font-size: 14px;
+.hero-quote::before,
+.hero-quote::after {
+  content: "";
 }
 
 .card {
@@ -113,7 +110,7 @@ input {
   border-radius: 10px;
   padding: 12px 14px;
   color: var(--text);
-  font-size: 15px;
+  font-size: 16px;
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
   width: 100%;
@@ -308,6 +305,12 @@ button:active {
   border-radius: 10px;
   padding: 10px 12px;
   word-break: break-all;
+}
+
+.share-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .players {
@@ -524,7 +527,7 @@ button:active {
   border-radius: 10px;
   padding: 12px 14px;
   color: var(--text);
-  font-size: 15px;
+  font-size: 16px;
   font-family: inherit;
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -648,13 +651,57 @@ button:active {
   cursor: not-allowed;
 }
 
+/* Tablet styles */
+@media (max-width: 1024px) {
+  .game-layout {
+    flex-direction: column;
+  }
+
+  .game-sidebar {
+    border-left: none;
+    border-top: 1px solid var(--border);
+    padding-left: 0;
+    padding-top: 16px;
+    max-width: 100%;
+    margin-top: 24px;
+  }
+
+  .page {
+    width: 100%;
+  }
+}
+
+/* Mobile styles */
 @media (max-width: 720px) {
   body {
-    padding: 16px;
+    padding: 12px;
+    min-height: 100vh;
+  }
+
+  .page {
+    width: 100%;
+    min-height: 100vh;
   }
 
   .card {
-    padding: 18px;
+    padding: 16px;
+  }
+
+  .hero {
+    margin-bottom: 20px;
+  }
+
+  .hero-logo {
+    gap: 12px;
+  }
+
+  .logo-img {
+    max-height: 120px !important;
+  }
+
+  .hero-quote {
+    font-size: 13px;
+    max-width: 100%;
   }
 
   .action-card {
@@ -663,19 +710,220 @@ button:active {
   }
 
   .primary-btn,
-  .secondary-btn {
+  .secondary-btn,
+  .ghost-btn {
     width: 100%;
     text-align: center;
+    min-width: auto;
   }
 
   .room-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
+  }
+
+  .room-header h1 {
+    font-size: 24px;
+  }
+
+  .share {
+    font-size: 13px;
+    word-break: break-all;
+  }
+
+  .share-container {
+    flex-wrap: wrap;
+  }
+
+  .copy-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 6px 10px;
   }
 
   .start-row {
     flex-direction: column;
     align-items: stretch;
+    gap: 12px;
+  }
+
+  .settings {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .settings-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .player-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+  }
+
+  .game-layout {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .game-sidebar {
+    border-left: none;
+    border-top: 1px solid var(--border);
+    padding-left: 0;
+    padding-top: 16px;
+    max-width: 100%;
+    margin-top: 16px;
+  }
+
+  .players-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .players-header h2 {
+    font-size: 18px;
+  }
+
+  .selected-card-content {
+    padding: 20px;
+    max-width: 100%;
+    margin: 16px;
+  }
+
+  .selected-card-preview {
+    max-width: 100%;
+  }
+
+  .card-img-large {
+    max-height: 400px;
+  }
+
+  .game-end-content {
+    padding: 32px 20px;
+  }
+
+  .game-end-content h1 {
+    font-size: 32px !important;
+  }
+
+  .game-end-content h2 {
+    font-size: 20px !important;
+  }
+
+  .final-leader-row {
+    padding: 12px 16px !important;
+    flex-wrap: wrap;
+  }
+
+  .story-submitted-content {
+    padding: 24px 20px;
+    margin: 16px;
+  }
+
+  .story-submitted-content h2 {
+    font-size: 24px;
+  }
+
+  .story-submitted-content p {
+    font-size: 16px;
+  }
+}
+
+/* Small mobile styles */
+@media (max-width: 480px) {
+  body {
+    padding: 8px;
+    min-height: 100vh;
+  }
+
+  .page {
+    min-height: 100vh;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .room-header h1 {
+    font-size: 20px;
+  }
+
+  .share {
+    font-size: 12px;
+  }
+
+  .player-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 8px;
+  }
+
+  .card-tile {
+    aspect-ratio: 2 / 3;
+  }
+
+  .selected-card-content {
+    padding: 16px;
+    margin: 8px;
+  }
+
+  .game-end-content {
+    padding: 24px 16px;
+  }
+
+  .game-end-content h1 {
+    font-size: 24px !important;
+  }
+
+  .story-submitted-content {
+    padding: 20px 16px;
+    margin: 8px;
+  }
+
+  .story-submitted-content h2 {
+    font-size: 20px;
+  }
+
+  .logo-img {
+    max-height: 100px !important;
+  }
+
+  .hero-quote {
+    font-size: 12px;
+  }
+
+  .players-header h2 {
+    font-size: 16px;
+  }
+
+  .leaderboard {
+    gap: 6px;
+  }
+
+  .leader-row {
+    padding: 6px 8px;
+  }
+
+  .leader-name {
+    font-size: 13px;
+  }
+
+  .leader-score {
+    font-size: 12px;
   }
 }
 

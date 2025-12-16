@@ -322,7 +322,7 @@ export default function RoomPage({ params }) {
           <p className="pill">Private room</p>
           <h1>Room {code}</h1>
           <p className="sub">Share this link to invite friends:</p>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "8px" }}>
+          <div className="share-container" style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "8px" }}>
             <p className="share" style={{ margin: 0, flex: 1 }}>{shareUrl}</p>
             <button
               type="button"
@@ -345,7 +345,6 @@ export default function RoomPage({ params }) {
               {copied ? "✓ Copied" : "Copy"}
             </button>
           </div>
-          <p className="muted">You are joining as: {displayName || "..."}</p>
         </div>
         <Link className="ghost-btn" href="/">
           ⟵ Back home
@@ -362,8 +361,17 @@ export default function RoomPage({ params }) {
             {players.map((player, idx) => {
               const initials = getInitials(player.display_name);
               const avatarColor = getAvatarColor(player.display_name);
+              const isCurrentPlayer = player.client_id === clientId;
               return (
-                <div key={player.id} className="player-card">
+                <div 
+                  key={player.id} 
+                  className="player-card"
+                  style={{
+                    border: isCurrentPlayer ? `2px solid ${avatarColor}` : "none",
+                    borderRadius: "12px",
+                    padding: isCurrentPlayer ? "10px" : "0",
+                  }}
+                >
                   <div
                     className="player-avatar"
                     style={{

@@ -519,6 +519,7 @@ export default function GamePage({ params }) {
                 const initials = getInitials(player.display_name);
                 const avatarColor = getAvatarColor(player.display_name);
                 const isTopThree = rank <= 3;
+                const isCurrentPlayer = player.client_id === clientId;
                 
                 return (
                   <div
@@ -530,7 +531,7 @@ export default function GamePage({ params }) {
                       gap: "16px",
                       padding: "16px 20px",
                       background: isTopThree ? "rgba(244, 162, 97, 0.1)" : "rgba(255, 255, 255, 0.02)",
-                      border: isTopThree ? `2px solid var(--accent)` : "1px solid var(--border)",
+                      border: isCurrentPlayer ? `2px solid ${avatarColor}` : (isTopThree ? `2px solid var(--accent)` : "1px solid var(--border)"),
                       borderRadius: "12px",
                       marginBottom: "12px",
                     }}
@@ -941,8 +942,15 @@ export default function GamePage({ params }) {
                 const playerStatus = getPlayerStatus(p.id);
                 const initials = getInitials(p.display_name);
                 const avatarColor = getAvatarColor(p.display_name);
+                const isCurrentPlayer = p.client_id === clientId;
                 return (
-                  <li key={p.id} className="leader-row">
+                  <li 
+                    key={p.id} 
+                    className="leader-row"
+                    style={{
+                      border: isCurrentPlayer ? `2px solid ${avatarColor}` : undefined,
+                    }}
+                  >
                     <div className="leader-main">
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <div

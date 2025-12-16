@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 // Prevent static prerender issues with client-only hooks
 export const dynamic = "force-dynamic";
@@ -87,13 +88,19 @@ export default function HomePage() {
     <Suspense fallback={null}>
       <div className="page">
         <header className="hero">
-          <div className="brand">
-            <div className="logo">D</div>
-            <div className="name">Dixit</div>
-          </div>
-          <div className="hero-copy">
-            <p className="tagline">Tell stories. Guess creatively. Play together.</p>
-            <p className="sub">Create a private room or jump into a friend's game in seconds.</p>
+          <div className="hero-logo">
+            <Image 
+              src="/logo.png" 
+              alt="Dixit" 
+              width={600} 
+              height={240} 
+              className="logo-img"
+              priority
+              unoptimized
+            />
+            <blockquote className="hero-quote">
+              "Tell stories. Guess creatively. Play together. Create a private room or jump into a friend's game in seconds."
+            </blockquote>
           </div>
         </header>
 
