@@ -29,9 +29,14 @@ export default function HomePage() {
     // Pre-fill join code if coming from a room link
     const search = new URLSearchParams(window.location.search);
     const codeParam = search.get("join");
+     const errorParam = search.get("error");
     if (codeParam) {
       setJoinCode(codeParam.toUpperCase());
-      setStatus({ message: "Enter your name to join this room", type: "ok" });
+      if (errorParam === "started") {
+        setStatus({ message: "This game has already started.", type: "error" });
+      } else {
+        setStatus({ message: "Enter your name to join this room", type: "ok" });
+      }
     }
   }, []);
 

@@ -11,10 +11,14 @@ const generateCode = () => {
   return code;
 };
 
-export async function POST() {
+export async function POST(req) {
   if (!supabaseAdmin) {
     return NextResponse.json({ error: "Supabase not configured" }, { status: 500 });
   }
+
+  const body = req ? await req.json().catch(() => ({})) : {};
+  const incomingCardSet = body?.cardSet;
+  const cardSet = incomingCardSet === "custom" ? "custom" : "original";
 
   try {
     let code = generateCode();
@@ -28,10 +32,14 @@ export async function POST() {
       attempts += 1;
     }
 
-    const { data, error } = await supabaseAdmin.from("rooms").insert({ code }).select("code").single();
+    const { data, error } = await supabaseAdmin
+      .from("rooms")
+      .insert({ code, card_set: cardSet })
+      .select("code, card_set")
+      .single();
     if (error) throw error;
 
-    return NextResponse.json({ code: data.code });
+    return NextResponse.json({ code: data.code, cardSet: data.card_set });
   } catch (error) {
     console.error("Create room error:", error);
     return NextResponse.json({ error: "Failed to create room" }, { status: 500 });
