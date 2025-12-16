@@ -399,6 +399,51 @@ export default function GamePage({ params }) {
     return [...players].sort((a, b) => (b.score || 0) - (a.score || 0));
   }, [players]);
 
+  // Shuffle submissions for voting phase, keep original order for reveal
+  const displaySubmissions = useMemo(() => {
+    if (!submissions || !submissions.length || !room) return [];
+    
+    // Filter out any truly invalid submissions (null, undefined, or missing critical fields)
+    const validSubmissions = submissions.filter(sub => {
+      return sub && sub.player_id && sub.card_path;
+    });
+    
+    if (!validSubmissions.length) return [];
+    
+    // For reveal phase, keep original order
+    if (room.phase === "reveal") {
+      return validSubmissions;
+    }
+    
+    // For voting phase, shuffle the cards to hide which is the storyteller's card
+    // Use room ID and round number as seed for consistent shuffle across all players
+    const shuffled = [...validSubmissions];
+    
+    // Create a seed from room ID and round number for deterministic shuffle
+    const seed = `${room.id || code}-${room.current_round || 0}`;
+    
+    // Generate a hash from the seed string
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      const char = seed.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    
+    // Use the hash as initial seed for pseudo-random number generator
+    let rng = hash;
+    
+    // Seeded Fisher-Yates shuffle - ensures all players see the same shuffled order
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      // Generate pseudo-random number between 0 and i (inclusive)
+      rng = (rng * 1103515245 + 12345) & 0x7fffffff; // Linear congruential generator
+      const j = Math.floor((rng / 0x7fffffff) * (i + 1));
+      // Swap elements
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    
+    return shuffled;
+  }, [submissions, room?.phase, room?.current_round, room?.id, code]);
 
   // Calculate points received this round for a player
   const getRoundPoints = useMemo(() => {
@@ -660,7 +705,7 @@ export default function GamePage({ params }) {
                 : "Waiting for story..."}
             </div>
 
-            {(room?.phase === "voting" || room?.phase === "reveal") && submissions.length > 0 && (
+            {(room?.phase === "voting" || room?.phase === "reveal") && displaySubmissions.length > 0 && (
               <div style={{ marginTop: 24 }}>
                 <div className="players-header">
                   <h2>{room?.phase === "voting" ? "Vote for the storyteller's card" : "Results"}</h2>
@@ -675,11 +720,12 @@ export default function GamePage({ params }) {
                       </button>
                     )
                   ) : (
-                    <p className="muted">{submissions.length} cards</p>
+                    <p className="muted">{displaySubmissions.length} cards</p>
                   )}
                 </div>
                 <div className="card-grid" style={{ marginTop: 16 }}>
-                  {submissions.map((sub) => {
+                  {displaySubmissions.filter(sub => sub && sub.player_id && sub.id).map((sub) => {
+                    if (!sub || !sub.player_id || !sub.id) return null;
                     const cardPlayer = players.find((p) => p.id === sub.player_id);
                     const roundPoints = room?.phase === "reveal" ? getRoundPoints(sub.player_id) : 0;
                     const voters = room?.phase === "reveal" ? getVotersForCard(sub.player_id) : [];
@@ -687,7 +733,7 @@ export default function GamePage({ params }) {
                     
                     return (
                       <div
-                        key={sub.id}
+                        key={sub.id || `sub-${sub.player_id}`}
                         className="submission-card-wrapper"
                         style={{ display: "flex", flexDirection: "column", alignItems: "center", position: "relative" }}
                       >
@@ -804,10 +850,7 @@ export default function GamePage({ params }) {
               </div>
 
               {isStoryteller && selectedCard && (
-                <div style={{ marginTop: 20, width: "100%" }}>
-                  <label htmlFor="story-prompt" className="label">
-                    Write your prompt
-                  </label>
+                <div style={{ marginTop: 16, width: "100%" }}>
                   <textarea
                     id="story-prompt"
                     className="story-input"
@@ -815,7 +858,7 @@ export default function GamePage({ params }) {
                     value={storyPrompt}
                     onChange={(e) => setStoryPrompt(e.target.value)}
                     maxLength={200}
-                    rows={3}
+                    rows={2}
                   />
                 </div>
               )}
@@ -832,7 +875,7 @@ export default function GamePage({ params }) {
                 );
               })()}
 
-              <div className="start-row" style={{ marginTop: 20, width: "100%" }}>
+                      <div className="start-row" style={{ marginTop: 16, width: "100%" }}>
                 <button
                   type="button"
                   className="secondary-btn"
